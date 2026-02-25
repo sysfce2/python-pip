@@ -104,7 +104,7 @@ class TestUnpackArchives:
                 assert contents == expected_contents, f"fname: {fname}"
             if sys.platform == "win32":
                 # the permissions tests below don't apply in windows
-                # due to os.chmod being a noop
+                # because os.chmod() ignores the execute bit
                 continue
             mode = self.mode(path)
             assert (
@@ -131,7 +131,10 @@ class TestUnpackArchives:
                 file_tarinfo = tarfile.TarInfo(item)
                 mytar.addfile(file_tarinfo, io.BytesIO(b"file content"))
         return test_tar
-    
+
+    @pytest.mark.skipif(
+        sys.platform == "win32", reason="os.chmod() ignores execute bit on Windows"
+    )
     def test_confirm_files_mode_preconditions(self) -> None:
         assert self.executable_mode == 0o755
         assert not (self.default_file_mode & 0o111), (
