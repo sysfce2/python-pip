@@ -131,6 +131,13 @@ class TestUnpackArchives:
                 file_tarinfo = tarfile.TarInfo(item)
                 mytar.addfile(file_tarinfo, io.BytesIO(b"file content"))
         return test_tar
+    
+    def test_confirm_files_mode_preconditions(self) -> None:
+        assert self.executable_mode == 0o755
+        assert not (self.default_file_mode & 0o111), (
+            f"default_file_mode {self.default_file_mode:#o} has execute bits set; "
+            "the permission tests in confirm_files() would be meaningless"
+        )
 
     def test_unpack_tgz(self, data: TestData) -> None:
         """
