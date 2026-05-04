@@ -1,2 +1,0 @@
-Fix issue where uninstallation left behind empty directories. Revert the
-removal the adjacent ``__pycache__`` directory when a .py file is removed.
